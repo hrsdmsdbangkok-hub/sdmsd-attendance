@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบลงเวลาปฏิบัติงาน สำนักงานเลขานุการ สำนักการแพทย์</title>
+    <style>
+        body { font-family: 'Sarabun', Arial, sans-serif; background-color: #f0f4f1; margin: 0; padding: 15px; color: #333; }
+        .card { max-width: 480px; margin: 0 auto; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .text-center { text-align: center; }
+        .logo { max-width: 110px; height: auto; margin-bottom: 10px; }
+        h2 { font-size: 18px; color: #1b5e20; margin: 5px 0; }
+        p.subtitle { font-size: 13px; color: #666; margin: 0 0 20px 0; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 13px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        .camera-section { background: #f9f9f9; padding: 10px; border: 1px dashed #bbb; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+        video, canvas, img { width: 100%; max-height: 240px; border-radius: 6px; background: #000; display: block; margin: 0 auto; }
+        .btn-snap { background: #0288d1; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 13px; }
+        .btn-submit { width: 100%; padding: 12px; background-color: #a5d6a7; color: #333; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
+        .active-btn { background-color: #2e7d32 !important; color: white !important; cursor: pointer !important; }
+        .danger-btn { background-color: #c62828 !important; color: white !important; cursor: not-allowed !important; }
+        .alert-box { padding: 12px; border-radius: 6px; margin-top: 15px; font-size: 14px; text-align: center; display: none; font-weight: bold; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="text-center">
+        <!-- ใช้ภาพโลโก้ตามชื่อไฟล์ที่ระบุ -->
+        <img src="15.Logoสำนักงานเลขานุการสำนักการแพทย์.jpg" alt="โลโก้สำนักงานเลขานุการสำนักการแพทย์" class="logo">
+        <h2>ระบบลงเวลาปฏิบัติงาน</h2>
+        <p class="subtitle">สำนักงานเลขานุการ สำนักการแพทย์</p>
+    </div>
+
+    <form id="mainForm">
+        <div class="form-group">
+            <label>ชื่อ-นามสกุล</label>
+            <input type="text" id="fullname" required placeholder="ระบุชื่อและนามสกุล">
+        </div>
+        <div class="form-group">
+            <label>ตำแหน่ง</label>
+            <input type="text" id="position" required placeholder="ระบุตำแหน่ง">
+        </div>
+        <div class="form-group">
+            <label>สังกัด/ฝ่าย</label>
+            <input type="text" id="department" required placeholder="ระบุฝ่ายหรือกลุ่มงาน">
+        </div>
+        <div class="form-group">
+            <label>ประเภทของพนักงาน</label>
+            <select id="empType" required>
+                <option value="type1">ลูกจ้างประจำ / ลูกจ้างชั่วคราว / พนักงานประกันสังคม</option>
+                <option value="type2">บุคคลภายนอกที่ช่วยปฏิบัติราชการ</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>ประเภทของพนักงาน</label>
+            <select id="empType" required>
+                <option value="ลูกจ้างประจำ">ลูกจ้างประจำ</option>
+                <option value="ลูกจ้างชั่วคราว">ลูกจ้างชั่วคราว</option>
+                <option value="พนักงานประกันสังคม">พนักงานประกันสังคม</option>
+                <option value="บุคคลภายนอกที่ช่วยปฏิบัติราชการ">บุคคลภายนอกที่ช่วยปฏิบัติราชการ</option>
+            </select>
+        </div>
+
+        <div class="camera-section">
+            <label>📸 ถ่ายภาพเซลฟี่กับสถานที่ทำงาน</label>
+            <video id="video" autoplay playsinline></video>
+            <img id="photoPreview" style="display:none;">
+            <button type="button" class="btn-snap" id="snapBtn">📸 กดถ่ายภาพ</button>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit" disabled>กำลังรอตรวจสอบพิกัด GPS...</button>
+    </form>
+
+    <div id="alertBox" class="alert-box"></div>
+</div>
+
+<script>
+    // พิกัดวัดศรีสุดารามวรวิหาร
+    const TARGET_LAT = 13.7667;
+    const TARGET_LON = 100.4702;
+    const RADIUS_LIMIT = 100; // รัศมีไม่เกิน 100 เมตร
+
+    let userGps = "";
+    let photoData = "";
+    let streamRef = null;
+
+    const submitBtn = document.getElementById('submitBtn');
+    const alertBox = document.getElementById('alertBox');
+    const video = document.getElementById('video');
+    const photoPreview = document.getElementById('photoPreview');
+    const snapBtn = document.getElementById('snapBtn');
+
+    // 1. ตรวจสอบพิกัดทันทีเมื่อเปิดหน้าจอ
+    window.addEventListener('load', () => {
+        checkLocation();
+        startCamera();
+    });
+
+    function checkLocation() {
+        if (!navigator.geolocation) {
+            updateSubmitStatus("Browser ไม่รองรับ GPS", "danger");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                userGps = `${lat},${lon}`;
+                
+                // คำนวณระยะทางจากวัดศรีสุดารามฯ
+                const distance = haversineDistance(lat, lon, TARGET_LAT, TARGET_LON);
+                
+                if (distance <= RADIUS_LIMIT) {
+                    submitBtn.disabled = false;
+                    submitBtn.className = "btn-submit active-btn";
+                    submitBtn.innerText = `📌 บันทึกเวลา (ในพิกัดงาน ${Math.round(distance)} ม.)`;
+                } else {
+                    updateSubmitStatus(`❌ อยู่นอกพื้นที่ทำงาน (ห่าง ${Math.round(distance)} ม.)`, "danger");
+                    alert(`คุณอยู่นอกพื้นที่พิกัดวัดศรีสุดารามวรวิหาร (${Math.round(distance)} เมตร) ระบบจำกัดรัศมีไม่เกิน 100 เมตร จึงไม่สามารถลงเวลาได้`);
+                }
+            },
+            (err) => {
+                updateSubmitStatus("❌ โปรดเปิดสิทธิ์เข้าถึง GPS บนมือถือ", "danger");
+                alert("กรุณาเปิดการระบุตำแหน่ง (GPS) บนโทรศัพท์ และกดยอมรับสิทธิ์แชร์พิกัดในบราวเซอร์ด้วยครับ");
+            },
+            { enableHighAccuracy: true }
+        );
+    }
+
+    // สูตรคำนวณระยะห่างพิกัดผิวโลก
+    function haversineDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371000; // รัศมีโลกเป็นเมตร
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    function updateSubmitStatus(text, type) {
+        submitBtn.innerText = text;
+        if(type === "danger") {
+            submitBtn.className = "btn-submit danger-btn";
+        }
+    }
+
+    // 2. เรียกใช้งานกล้องหน้ามือถืออัตโนมัติ
+    function startCamera() {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
+            .then(stream => {
+                streamRef = stream;
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.log("ไม่สามารถเปิดกล้องหน้าตรงๆ ได้ กำลังลองเปิดกล้องทั่วไป...");
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(stream => { streamRef = stream; video.srcObject = stream; });
+            });
+    }
+
+    // 3. จัดการการถ่ายรูปเซลฟี่
+    snapBtn.addEventListener('click', () => {
+        if (video.style.display !== 'none') {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            
+            photoData = canvas.toDataURL('image/jpeg', 0.6); // แปลงรูปเป็น Base64 แบบย่อขนาดบีบอัด
+            photoPreview.src = photoData;
+            
+            video.style.display = 'none';
+            photoPreview.style.display = 'block';
+            snapBtn.innerText = "🔄 ถ่ายใหม่อีกครั้ง";
+        } else {
+            video.style.display = 'block';
+            photoPreview.style.display = 'none';
+            snapBtn.innerText = "📸 กดถ่ายภาพ";
+            photoData = "";
+        }
+    });
+
+    // 4. ตรวจเงื่อนไขเวลาและกดส่งข้อมูลลงชีต
+    document.getElementById('mainForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if (!photoData) {
+            alert("กรุณากดถ่ายภาพเซลฟี่ยืนยันตัวตนก่อนบันทึกเวลาครับ");
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = "กำลังบันทึกข้อมูลเข้าระบบ...";
+
+        const now = new Date();
+        const currentTimeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const currentDateStr = now.toLocaleDateString('th-TH');
+        const hour = now.getHours();
+        const minute = now.getMinutes();
+
+        const empType = document.getElementById('empType').value;
+        const actionType = document.getElementById('actionType').value;
+        let workStatus = "ปกติ";
+
+        // คำนวณเงื่อนไขตามนโยบาย
+        // คำนวณเงื่อนไขตามนโยบาย (เวอร์ชันแยกประเภทพนักงานแล้ว)
+        if (actionType === "เข้างาน") {
+            // ถ้าเป็นกลุ่ม บุคคลภายนอกฯ ให้เข้างานได้ไม่เกิน 08:00 น.
+            if (empType === "บุคคลภายนอกที่ช่วยปฏิบัติราชการ") { 
+                if (hour > 8 || (hour === 8 && minute > 0)) workStatus = "สาย";
+            } else { 
+                // ถ้าเป็น ลูกจ้างประจำ, ลูกจ้างชั่วคราว, หรือ พนักงานประกันสังคม ให้เข้างานได้ไม่เกิน 07:00 น.
+                if (hour > 7 || (hour === 7 && minute > 0)) workStatus = "สาย";
+            }
+        } else if (actionType === "เลิกงาน") { // ทั้งสองกลุ่มห้ามออกก่อน 16:00 น.
+            if (hour < 16) workStatus = "ขาดราชการ";
+        }
+
+        // จัดเตรียม Payload ส่งหา Google Sheets
+        const payload = {
+            timestamp: `${currentDateStr} ${currentTimeStr}`,
+            fullname: document.getElementById('fullname').value,
+            position: document.getElementById('position').value,
+            department: document.getElementById('department').value,
+            empType: empType, // ส่งค่าประเภทพนักงานที่เลือก (เช่น "ลูกจ้างประจำ") ไปที่ชีตโดยตรง
+            actionType: actionType,
+            workStatus: workStatus,
+            gps: userGps,
+            photo: photoData
+        };
+
+        // ยิงส่งข้อมูลไปยัง Web App URL ของกูเกิลแอปสคริปต์
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbxXzG8MfR6Fb7N1yVK0KGBlWoIjyiewVRjMWMOsVrYsS9MZWOC2JpvNIPLAXvPpetzlIw/exec";
+
+        fetch(webAppUrl, {
+            method: "POST",
+            mode: "no-cors", // ใช้ no-cors ป้องกันปัญหา Cross-Origin บนเบราว์เซอร์มือถือ
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            alertBox.style.display = "block";
+            alertBox.className = `alert-box alert-success`;
+            alertBox.innerHTML = `🔔 บันทึกสำเร็จเรียบร้อย!<br>คุณได้ลงเวลา (${actionType}) ตอนกี่โมง: <b>${currentTimeStr} น.</b><br>สถานะระบบสรุป: <span style="text-decoration:underline;">${workStatus}</span>`;
+            
+            alert(`บันทึกเวลาสำเร็จ!\nคุณลงเวลาตอน: ${currentTimeStr} น.\nผลลัพธ์ระบบ: ${workStatus}`);
+            
+            // รีเซ็ตฟอร์มเบื้องต้นเพื่อให้คนถัดไปกดได้ง่าย
+            document.getElementById('fullname').value = "";
+            photoPreview.style.display = 'none';
+            video.style.display = 'block';
+            snapBtn.innerText = "📸 กดถ่ายภาพ";
+            photoData = "";
+            checkLocation(); // เช็คตำแหน่งเผื่อคนต่อไปเดินสลับพื้นที่
+        })
+        .catch(err => {
+            alertBox.style.display = "block";
+            alertBox.className = `alert-box alert-error`;
+            alertBox.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง";
+            checkLocation();
+        });
+    });
+</script>
+
+</body>
+</html>
