@@ -5,24 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบลงเวลาปฏิบัติงาน สำนักงานเลขานุการ สำนักการแพทย์</title>
     <style>
-        body { font-family: 'Sarabun', Arial, sans-serif; background-color: #f0f4f1; margin: 0; padding: 15px; color: #333; }
-        .card { max-width: 480px; margin: 0 auto; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap');
+
+        body { 
+            font-family: 'Sarabun', Arial, sans-serif; 
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); /* พื้นหลังไล่เฉดสีเขียวอ่อนธรรมชาติ */
+            margin: 0; 
+            padding: 15px; 
+            color: #2e7d32; 
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .card { 
+            max-width: 480px; 
+            width: 100%;
+            margin: 20px auto; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 25px 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.15); /* เงาสีเขียวจางๆ เพิ่มมิติการ์ด */
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-sizing: border-box;
+        }
         .text-center { text-align: center; }
-        .logo { max-width: 110px; height: auto; margin-bottom: 10px; }
-        h2 { font-size: 18px; color: #1b5e20; margin: 5px 0; }
-        p.subtitle { font-size: 13px; color: #666; margin: 0 0 20px 0; }
-        .form-group { margin-bottom: 14px; }
-        label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 13px; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-        .camera-section { background: #f9f9f9; padding: 10px; border: 1px dashed #bbb; border-radius: 8px; margin-bottom: 15px; text-align: center; }
-        video, canvas, img { width: 100%; max-height: 240px; border-radius: 6px; background: #000; display: block; margin: 0 auto; }
-        .btn-snap { background: #0288d1; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 13px; }
-        .btn-submit { width: 100%; padding: 12px; background-color: #a5d6a7; color: #333; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
-        .active-btn { background-color: #2e7d32 !important; color: white !important; cursor: pointer !important; }
-        .danger-btn { background-color: #c62828 !important; color: white !important; cursor: not-allowed !important; }
-        .alert-box { padding: 12px; border-radius: 6px; margin-top: 15px; font-size: 14px; text-align: center; display: none; font-weight: bold; }
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .logo { 
+            max-width: 110px; 
+            height: auto; 
+            margin-bottom: 12px; 
+            background-color: #ffffff; /* เปลี่ยนพื้นหลังใต้ภาพให้เป็นสีขาวตามต้องการ */
+            border-radius: 50%;        /* ลบมุมสีดำรอบวงกลม */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            padding: 2px;
+        }
+        h2 { 
+            font-size: 20px; 
+            color: #1b5e20; /* สีเขียวเข้มสัญลักษณ์สำนักการแพทย์ */
+            margin: 5px 0; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        p.subtitle { 
+            font-size: 13px; 
+            color: #4caf50; /* สีเขียวสว่างนุ่มนวล */
+            margin: 0 0 25px 0; 
+            font-weight: 500;
+        }
+        .form-group { margin-bottom: 18px; text-align: left; }
+        label { 
+            display: block; 
+            margin-bottom: 6px; 
+            font-weight: bold; 
+            font-size: 13.5px; 
+            color: #2e7d32; 
+        }
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1.5px solid #a5d6a7; 
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            font-size: 14px; 
+            background-color: #fbfdfb;
+            color: #1b5e20;
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+            background-color: #ffffff;
+        }
+        .camera-section { 
+            background: #f1f8f3; 
+            padding: 15px; 
+            border: 2px dashed #81c784; 
+            border-radius: 12px; 
+            margin-bottom: 20px; 
+            text-align: center; 
+        }
+        video, canvas, img { 
+            width: 100%; 
+            max-height: 240px; 
+            border-radius: 10px; 
+            background: #252525; 
+            display: block; 
+            margin: 0 auto; 
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+        .btn-snap { 
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            font-size: 13px; 
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+            transition: transform 0.2s;
+        }
+        .btn-snap:active { transform: scale(0.95); }
+        
+        .btn-submit { 
+            width: 100%; 
+            padding: 14px; 
+            background-color: #cccccc; 
+            color: #666666; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: not-allowed; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .active-btn { 
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%) !important; 
+            color: white !important; 
+            cursor: pointer !important; 
+            box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3) !important;
+        }
+        .active-btn:active { transform: scale(0.98); }
+        .danger-btn { 
+            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%) !important; 
+            color: white !important; 
+            cursor: not-allowed !important; 
+            box-shadow: 0 5px 15px rgba(198, 40, 40, 0.3) !important;
+        }
+        .alert-box { 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-top: 20px; 
+            font-size: 14px; 
+            text-align: center; 
+            display: none; 
+            font-weight: bold; 
+            line-height: 1.6;
+        }
+        .alert-success { 
+            background: #e8f5e9; 
+            color: #1b5e20; 
+            border: 1px solid #c8e6c9; 
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.1);
+        }
+        .alert-error { 
+            background: #ffebee; 
+            color: #c62828; 
+            border: 1px solid #ffcdd2; 
+        }
     </style>
 </head>
 <body>
