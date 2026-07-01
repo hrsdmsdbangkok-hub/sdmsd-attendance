@@ -31,12 +31,17 @@
         .text-center { text-align: center; }
         .logo { 
             max-width: 110px; 
-            height: auto; 
+            height: 110px;             /* กำหนดความสูงให้เท่ากับความกว้างเพื่อให้เป็นวงกลมสมบูรณ์ */
             margin-bottom: 12px; 
-            background-color: #ffffff; /* เปลี่ยนพื้นหลังใต้ภาพให้เป็นสีขาวตามต้องการ */
-            border-radius: 50%;        /* ลบมุมสีดำรอบวงกลม */
+            background-color: #ffffff; 
+            border-radius: 50%;        
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             padding: 2px;
+            
+            /* 🔗 โค้ดส่วนที่เพิ่มเข้ามาเพื่อซ่อนขอบสีดำด้านใน */
+            object-fit: cover;         /* สั่งให้ครอบตัดรูปภาพ */
+            transform: scale(1.15);    /* ซูมเนื้อภาพเข้าไป 15% เพื่อดันเส้นขอบสีดำด้านนอกให้หลุดออกจากกรอบ */
+            overflow: hidden;          /* สั่งให้ตัดส่วนที่เลยขอบวงกลมทิ้งไปทันที */
         }
         h2 { 
             font-size: 20px; 
