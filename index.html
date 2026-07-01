@@ -42,17 +42,37 @@
         </div>
         <div class="form-group">
             <label>ตำแหน่ง</label>
-            <input type="text" id="position" required placeholder="ระบุตำแหน่ง">
+            <select id="position" required>
+                <option value="" disabled selected>--- กรุณาเลือกตำแหน่ง ---</option>
+                <option value="นักจัดการงานทั่วไป">นักจัดการงานทั่วไป</option>
+                <option value="นักทรัพยากรบุคคล">นักทรัพยากรบุคคล</option>
+                <option value="นักวิชาการเงินและบัญชี">นักวิชาการเงินและบัญชี</option>
+                <option value="นักวิชาการพัสดุ">นักวิชาการพัสดุ</option>
+                <option value="นิติกร">นิติกร</option>
+                <option value="ผู้ชำนาญการด้านทรัพยากรบุคคล">ผู้ชำนาญการด้านทรัพยากรบุคคล</option>
+                <option value="ผู้เชี่ยวชาญด้านการคลังและกฎหมาย">ผู้เชี่ยวชาญด้านการคลังและกฎหมาย</option>
+                <option value="ผู้เชี่ยวชาญด้านการเงินและงบประมาณ">ผู้เชี่ยวชาญด้านการเงินและงบประมาณ</option>
+                <option value="ผู้เชี่ยวชาญด้านการบัญชีและพัสดุ">ผู้เชี่ยวชาญด้านการบัญชีและพัสดุ</option>
+                <option value="ผู้เชี่ยวชาญด้านวิเคราะห์นโยบายและแผน">ผู้เชี่ยวชาญด้านวิเคราะห์นโยบายและแผน</option>
+                <option value="เจ้าพนักงานธุรการ">เจ้าพนักงานธุรการ</option>
+                <option value="เจ้าพนักงานโสตทัศนศึกษา">เจ้าพนักงานโสตทัศนศึกษา</option>
+                <option value="นายช่างเทคนิค">นายช่างเทคนิค</option>
+                <option value="ผู้ช่วยช่าง (ช่างเทคนิค)">ผู้ช่วยช่าง (ช่างเทคนิค)</option>
+                <option value="พนักงานทั่วไป">พนักงานทั่วไป</option>
+                <option value="พนักงานสถานที่">พนักงานสถานที่</option>
+                <option value="พนักงานขับรถยนต์">พนักงานขับรถยนต์</option>
+                <option value="อื่น ๆ">อื่น ๆ</option>
+            </select>
         </div>
         <div class="form-group">
-            <label>สังกัด/ฝ่าย</label>
-            <input type="text" id="department" required placeholder="ระบุฝ่ายหรือกลุ่มงาน">
-        </div>
-        <div class="form-group">
-            <label>ประเภทของพนักงาน</label>
-            <select id="empType" required>
-                <option value="type1">ลูกจ้างประจำ / ลูกจ้างชั่วคราว / พนักงานประกันสังคม</option>
-                <option value="type2">บุคคลภายนอกที่ช่วยปฏิบัติราชการ</option>
+            <label>สังกัด/กลุ่มงาน</label>
+            <select id="department" required>
+                <option value="" disabled selected>--- กรุณาเลือกกลุ่มงาน ---</option>
+                <option value="กลุ่มงานช่วยนักบริหาร">กลุ่มงานช่วยนักบริหาร</option>
+                <option value="กลุ่มงานบริหารงานทั่วไป">กลุ่มงานบริหารงานทั่วไป</option>
+                <option value="กลุ่มงานการเจ้าหน้าที่">กลุ่มงานการเจ้าหน้าที่</option>
+                <option value="กลุ่มงานการคลัง">กลุ่มงานการคลัง</option>
+                <option value="กลุ่มงานนิติการ">กลุ่มงานนิติการ</option>
             </select>
         </div>
         <div class="form-group">
