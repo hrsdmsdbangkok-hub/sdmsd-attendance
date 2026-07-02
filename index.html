@@ -202,7 +202,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label>สังกัด/กลุ่มงาน</label>
+            <label>สังกัด/ฝ่าย</label>
             <select id="department" required>
                 <option value="" disabled selected>--- กรุณาเลือกกลุ่มงาน ---</option>
                 <option value="กลุ่มงานช่วยนักบริหาร">กลุ่มงานช่วยนักบริหาร</option>
@@ -264,11 +264,12 @@
             return;
         }
 
+        // เรียกดึงพิกัดพร้อมระบบป้องกันอาการค้าง (จัดระเบียบโครงสร้างใหม่)
         navigator.geolocation.getCurrentPosition(
-            (pos) => {
+            function(pos) {
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
-                userGps = `${lat},${lon}`;
+                userGps = lat + "," + lon;
                 
                 // คำนวณระยะทางจากวัดศรีสุดารามฯ
                 const distance = haversineDistance(lat, lon, TARGET_LAT, TARGET_LON);
@@ -276,19 +277,19 @@
                 if (distance <= RADIUS_LIMIT) {
                     submitBtn.disabled = false;
                     submitBtn.className = "btn-submit active-btn";
-                    submitBtn.innerText = `📌 บันทึกเวลา (ในพิกัดงาน ${Math.round(distance)} ม.)`;
+                    submitBtn.innerText = "📌 บันทึกเวลา (ในพิกัดงาน " + Math.round(distance) + " ม.)";
                 } else {
-                    updateSubmitStatus(`❌ อยู่นอกพื้นที่ทำงาน (ห่าง ${Math.round(distance)} ม.)`, "danger");
-                    alert(`คุณอยู่นอกพื้นที่พิกัดวัดศรีสุดารามวรวิหาร (${Math.round(distance)} เมตร) ระบบจำกัดรัศมีไม่เกิน 500 เมตร จึงไม่สามารถลงเวลาได้`);
+                    updateSubmitStatus("❌ อยู่นอกพื้นที่ทำงาน (ห่าง " + Math.round(distance) + " ม.)", "danger");
+                    alert("คุณอยู่นอกพื้นที่พิกัดวัดศรีสุดารามวรวิหาร (" + Math.round(distance) + " เมตร) ระบบจำกัดรัศมีไม่เกิน 200 เมตร จึงไม่สามารถลงเวลาได้");
                 }
             },
-            (err) => {
+            function(err) {
                 updateSubmitStatus("❌ โปรดเปิดสิทธิ์เข้าถึง GPS บนมือถือ", "danger");
-                alert("กรุณาเปิดการระบุตำแหน่ง (GPS) บนโทรศัพท์ และกดยอมรับสิทธิ์แชร์พิกัดในบราวเซอร์ด้วยครับ");
+                alert("กรุณาเปิดการระบุตำแหน่ง (GPS) บนโทรศัพท์ และกดยอบรับสิทธิ์แชร์พิกัดในบราวเซอร์ด้วยครับ\n(รหัสข้อผิดพลาด: " + err.message + ")");
             },
             { 
                 enableHighAccuracy: true, 
-                timeout: 10000,          
+                timeout: 8000,          /* ปรับลดเหลือ 8 วินาที หากดึงไม่สำเร็จให้ตัดไปทำงานฟังก์ชัน Error ทันที */
                 maximumAge: 0 
             }
         );
