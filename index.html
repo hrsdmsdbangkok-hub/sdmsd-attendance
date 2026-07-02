@@ -279,7 +279,7 @@
                     submitBtn.innerText = `📌 บันทึกเวลา (ในพิกัดงาน ${Math.round(distance)} ม.)`;
                 } else {
                     updateSubmitStatus(`❌ อยู่นอกพื้นที่ทำงาน (ห่าง ${Math.round(distance)} ม.)`, "danger");
-                    alert(`คุณอยู่นอกพื้นที่พิกัดวัดศรีสุดารามวรวิหาร (${Math.round(distance)} เมตร) ระบบจำกัดรัศมีไม่เกิน 100 เมตร จึงไม่สามารถลงเวลาได้`);
+                    alert(`คุณอยู่นอกพื้นที่พิกัดวัดศรีสุดารามวรวิหาร (${Math.round(distance)} เมตร) ระบบจำกัดรัศมีไม่เกิน 500 เมตร จึงไม่สามารถลงเวลาได้`);
                 }
             },
             (err) => {
@@ -287,6 +287,33 @@
                 alert("กรุณาเปิดการระบุตำแหน่ง (GPS) บนโทรศัพท์ และกดยอมรับสิทธิ์แชร์พิกัดในบราวเซอร์ด้วยครับ");
             },
             { enableHighAccuracy: true }
+(pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                userGps = `${lat},${lon}`;
+                
+                // คำนวณระยะทางจากวัดศรีสุดารามฯ
+                const distance = haversineDistance(lat, lon, TARGET_LAT, TARGET_LON);
+                
+                if (distance <= RADIUS_LIMIT) {
+                    submitBtn.disabled = false;
+                    submitBtn.className = "btn-submit active-btn";
+                    submitBtn.innerText = `📌 บันทึกเวลา (ในพิกัดงาน ${Math.round(distance)} ม.)`;
+                } else {
+                    updateSubmitStatus(`❌ อยู่นอกพื้นที่ทำงาน (ห่าง ${Math.round(distance)} ม.)`, "danger");
+                    alert(`คุณอยู่นอกพื้นที่พิกัดวัดศรีสุดารามวรวิหาร (${Math.round(distance)} เมตร) ระบบจำกัดรัศมีไม่เกิน 200 เมตร จึงไม่สามารถลงเวลาได้`);
+                }
+            },
+            (err) => {
+                updateSubmitStatus("❌ โปรดเปิดสิทธิ์เข้าถึง GPS บนมือถือ", "danger");
+                alert("กรุณาเปิดการระบุตำแหน่ง (GPS) บนโทรศัพท์ และกดยอมรับสิทธิ์แชร์พิกัดในบราวเซอร์ด้วยครับ");
+            },
+            // 🌟 เพิ่มปีกกาและข้อความชุดนี้ต่อท้ายลงไปตรงนี้เลยครับ (มีเครื่องหมายจุลภาค , คั่นข้างหน้าด้วยนะ)
+            { 
+                enableHighAccuracy: true, 
+                timeout: 10000,          
+                maximumAge: 0 
+            }
         );
     }
 
