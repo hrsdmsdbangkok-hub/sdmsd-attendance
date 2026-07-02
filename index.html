@@ -9,7 +9,7 @@
 
         body { 
             font-family: 'Sarabun', Arial, sans-serif; 
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); /* พื้นหลังไล่เฉดสีเขียวอ่อนธรรมชาติ */
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); 
             margin: 0; 
             padding: 15px; 
             color: #2e7d32; 
@@ -24,35 +24,33 @@
             background: rgba(255, 255, 255, 0.95); 
             padding: 25px 20px; 
             border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.15); /* เงาสีเขียวจางๆ เพิ่มมิติการ์ด */
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.15); 
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-sizing: border-box;
         }
         .text-center { text-align: center; }
         .logo { 
             max-width: 110px; 
-            height: 110px;             /* กำหนดความสูงให้เท่ากับความกว้างเพื่อให้เป็นวงกลมสมบูรณ์ */
+            height: 110px; 
             margin-bottom: 12px; 
             background-color: #ffffff; 
             border-radius: 50%;        
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             padding: 2px;
-            
-            /* 🔗 โค้ดส่วนที่เพิ่มเข้ามาเพื่อซ่อนขอบสีดำด้านใน */
-            object-fit: cover;         /* สั่งให้ครอบตัดรูปภาพ */
-            transform: scale(1.15);    /* ซูมเนื้อภาพเข้าไป 15% เพื่อดันเส้นขอบสีดำด้านนอกให้หลุดออกจากกรอบ */
-            overflow: hidden;          /* สั่งให้ตัดส่วนที่เลยขอบวงกลมทิ้งไปทันที */
+            object-fit: cover;         
+            transform: scale(1.15);    
+            overflow: hidden;          
         }
         h2 { 
             font-size: 20px; 
-            color: #1b5e20; /* สีเขียวเข้มสัญลักษณ์สำนักการแพทย์ */
+            color: #1b5e20; 
             margin: 5px 0; 
             font-weight: 700;
             letter-spacing: 0.5px;
         }
         p.subtitle { 
             font-size: 13px; 
-            color: #4caf50; /* สีเขียวสว่างนุ่มนวล */
+            color: #4caf50; 
             margin: 0 0 25px 0; 
             font-weight: 500;
         }
@@ -166,7 +164,6 @@
 
 <div class="card">
     <div class="text-center">
-        <!-- ใช้ภาพโลโก้ตามชื่อไฟล์ที่ระบุ -->
         <img src="15.Logoสำนักงานเลขานุการสำนักการแพทย์.jpg" alt="โลโก้สำนักงานเลขานุการสำนักการแพทย์" class="logo">
         <h2>ระบบลงเวลาปฏิบัติงาน</h2>
         <p class="subtitle">สำนักงานเลขานุการ สำนักการแพทย์</p>
@@ -221,6 +218,13 @@
                 <option value="บุคคลภายนอกที่ช่วยปฏิบัติราชการ">บุคคลภายนอกที่ช่วยปฏิบัติราชการ</option>
             </select>
         </div>
+        <div class="form-group">
+            <label>ประเภทการลงเวลา</label>
+            <select id="actionType" required>
+                <option value="เข้างาน">เข้างาน</option>
+                <option value="เลิกงาน">เลิกงาน</option>
+            </select>
+        </div>
 
         <div class="camera-section">
             <label>📸 ถ่ายภาพเซลฟี่กับสถานที่ทำงาน</label>
@@ -236,11 +240,9 @@
 </div>
 
 <script>
-    // พิกัดวัดศรีสุดารามวรวิหาร
-    // 📍 ปรับพิกัดศูนย์กลางใหม่ให้ตรงกับตำแหน่งอาคารสำนักงานในวัด และขยายรัศมีเผื่อ GPS แกว่ง
-    const TARGET_LAT = 13.766324; // พิกัดที่ปักตรงตัวอาคารภายในวัดศรีสุดารามฯ
+    const TARGET_LAT = 13.766324; 
     const TARGET_LON = 100.470656;
-    const RADIUS_LIMIT = 500;      // 🎯 ขยายรัศมีเพิ่มเป็น 500 เมตร เพื่อให้พนักงานกดลงเวลาได้ชัวร์ๆ
+    const RADIUS_LIMIT = 500;      
 
     let userGps = "";
     let photoData = "";
@@ -252,7 +254,6 @@
     const photoPreview = document.getElementById('photoPreview');
     const snapBtn = document.getElementById('snapBtn');
 
-    // 1. ตรวจสอบพิกัดทันทีเมื่อเปิดหน้าจอ
     window.addEventListener('load', () => {
         checkLocation();
         startCamera();
@@ -264,14 +265,12 @@
             return;
         }
 
-        // เรียกดึงพิกัดพร้อมระบบป้องกันอาการค้าง
         navigator.geolocation.getCurrentPosition(
             function(pos) {
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
                 userGps = lat + "," + lon;
                 
-                // คำนวณระยะทางจากวัดศรีสุดารามฯ
                 const distance = haversineDistance(lat, lon, TARGET_LAT, TARGET_LON);
                 
                 if (distance <= RADIUS_LIMIT) {
@@ -289,15 +288,14 @@
             },
             { 
                 enableHighAccuracy: true, 
-                timeout: 8000,          /* หากดึงไม่สำเร็จใน 8 วินาที ให้ตัดไปทำงานฟังก์ชัน Error ทันที */
+                timeout: 8000,          
                 maximumAge: 0 
             }
         );
     }
 
-    // สูตรคำนวณระยะห่างพิกัดผิวโลก
     function haversineDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371000; // รัศมีโลกเป็นเมตร
+        const R = 6371000; 
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
         const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -314,7 +312,6 @@
         }
     }
 
-    // 2. เรียกใช้งานกล้องหน้ามือถืออัตโนมัติ
     function startCamera() {
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
             .then(stream => {
@@ -328,7 +325,6 @@
             });
     }
 
-    // 3. จัดการการถ่ายรูปเซลฟี่
     snapBtn.addEventListener('click', () => {
         if (video.style.display !== 'none') {
             const canvas = document.createElement('canvas');
@@ -336,7 +332,7 @@
             canvas.height = video.videoHeight;
             canvas.getContext('2d').drawImage(video, 0, 0);
             
-            photoData = canvas.toDataURL('image/jpeg', 0.6); // แปลงรูปเป็น Base64 แบบย่อขนาดบีบอัด
+            photoData = canvas.toDataURL('image/jpeg', 0.6); 
             photoPreview.src = photoData;
             
             video.style.display = 'none';
@@ -350,7 +346,6 @@
         }
     });
 
-    // 4. ตรวจเงื่อนไขเวลาและกดส่งข้อมูลลงชีต
     document.getElementById('mainForm').addEventListener('submit', (e) => {
         e.preventDefault();
         
@@ -372,55 +367,43 @@
         const actionType = document.getElementById('actionType').value;
         let workStatus = "ปกติ";
 
-        // คำนวณเงื่อนไขตามนโยบาย
-        // คำนวณเงื่อนไขตามนโยบาย (เวอร์ชันแยกประเภทพนักงานแล้ว)
         if (actionType === "เข้างาน") {
-            // ถ้าเป็นกลุ่ม บุคคลภายนอกฯ ให้เข้างานได้ไม่เกิน 08:00 น.
             if (empType === "บุคคลภายนอกที่ช่วยปฏิบัติราชการ") { 
                 if (hour > 8 || (hour === 8 && minute > 0)) workStatus = "สาย";
             } else { 
-                // ถ้าเป็น ลูกจ้างประจำ, ลูกจ้างชั่วคราว, หรือ พนักงานประกันสังคม ให้เข้างานได้ไม่เกิน 07:00 น.
                 if (hour > 7 || (hour === 7 && minute > 0)) workStatus = "สาย";
             }
-        } else if (actionType === "เลิกงาน") { // ทั้งสองกลุ่มห้ามออกก่อน 16:00 น.
+        } else if (actionType === "เลิกงาน") { 
             if (hour < 16) workStatus = "ขาดราชการ";
         }
 
-        // จัดเตรียม Payload ส่งหา Google Sheets
         const payload = {
             timestamp: `${currentDateStr} ${currentTimeStr}`,
             fullname: document.getElementById('fullname').value,
             position: document.getElementById('position').value,
             department: document.getElementById('department').value,
-            empType: empType, // ส่งค่าประเภทพนักงานที่เลือก (เช่น "ลูกจ้างประจำ") ไปที่ชีตโดยตรง
+            empType: empType, 
             actionType: actionType,
             workStatus: workStatus,
             gps: userGps,
             photo: photoData
         };
 
-        // ยิงส่งข้อมูลไปยัง Web App URL ของกูเกิลแอปสคริปต์
         const webAppUrl = "https://script.google.com/macros/s/AKfycbwlndm-0Pz-vhFIEMkUka2pEyvhVHELyD3JnFavf8xHlTYFqBSkadW6GyaTHfOw4p3eeQ/exec";
 
-        // ยิงส่งข้อมูลไปยัง Web App URL ของกูเกิลแอปสคริปต์ (เวอร์ชันแก้ไขอาการค้าง)
-        const webAppUrl = "เอา_WEB_APP_URL_ชุดใหม่จากสเต็ปที่1มาวางตรงนี้ครับ";
-
-        // แปลงข้อมูลให้อยู่ในรูปแบบฟอร์มปกติเพื่อทะลวงด่านระบบความปลอดภัยบราวเซอร์มือถือ
         fetch(webAppUrl, {
             method: "POST",
-            mode: "cors", // เปลี่ยนเป็น cors แท้ ร่วมกับโค้ดกูเกิลสคริปต์ตัวใหม่ข้างบน
-            headers: { "Content-Type": "text/plain;charset=utf-8" }, // ใช้ text/plain เพื่อเลี่ยงการติดด่าน Pre-flight check
+            mode: "cors", 
+            headers: { "Content-Type": "text/plain;charset=utf-8" }, 
             body: JSON.stringify(payload)
         })
         .then(response => {
-            // เมื่อส่งสำเร็จแล้ว ให้ปิดสถานะค้างทันที และโชว์ป๊อปอัปแจ้งพนักงาน
             alertBox.style.display = "block";
             alertBox.className = `alert-box alert-success`;
             alertBox.innerHTML = `🔔 บันทึกสำเร็จเรียบร้อย!<br>คุณได้ลงเวลา (${actionType}) ตอนกี่โมง: <b>${currentTimeStr} น.</b><br>สถานะระบบสรุป: <span style="text-decoration:underline;">${workStatus}</span>`;
             
             alert(`บันทึกเวลาสำเร็จ!\nคุณลงเวลาตอน: ${currentTimeStr} น.\nผลลัพธ์ระบบ: ${workStatus}`);
             
-            // ล้างข้อมูลชื่อในช่องฟอร์มเพื่อให้คนถัดไปสแกนต่อได้เลย
             document.getElementById('fullname').value = "";
             photoPreview.style.display = 'none';
             video.style.display = 'block';
@@ -429,38 +412,17 @@
             checkLocation(); 
         })
         .catch(err => {
-            // หากระบบเน็ตมือถือหลุดหรือมีปัญหาจริงๆ จะได้แจ้งเตือนได้ถูกต้อง ไม่ขึ้นค้าง
             alertBox.style.display = "block";
             alertBox.className = `alert-box alert-error`;
             alertBox.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง";
             submitBtn.disabled = false;
             submitBtn.innerText = "📌 ลองกดบันทึกอีกครั้ง";
         });
-        .then(() => {
-            alertBox.style.display = "block";
-            alertBox.className = `alert-box alert-success`;
-            alertBox.innerHTML = `🔔 บันทึกสำเร็จเรียบร้อย!<br>คุณได้ลงเวลา (${actionType}) ตอนกี่โมง: <b>${currentTimeStr} น.</b><br>สถานะระบบสรุป: <span style="text-decoration:underline;">${workStatus}</span>`;
-            
-            alert(`บันทึกเวลาสำเร็จ!\nคุณลงเวลาตอน: ${currentTimeStr} น.\nผลลัพธ์ระบบ: ${workStatus}`);
-            
-            // รีเซ็ตฟอร์มเบื้องต้นเพื่อให้คนถัดไปกดได้ง่าย
-            document.getElementById('fullname').value = "";
-            photoPreview.style.display = 'none';
-            video.style.display = 'block';
-            snapBtn.innerText = "📸 กดถ่ายภาพ";
-            photoData = "";
-            checkLocation(); // เช็คตำแหน่งเผื่อคนต่อไปเดินสลับพื้นที่
-        })
-        .catch(err => {
-            alertBox.style.display = "block";
-            alertBox.className = `alert-box alert-error`;
-            alertBox.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง";
-            checkLocation();
-        });
-	// ส่วนสั่งเริ่มทำงานเมื่อโหลดหน้าเว็บเสร็จเรียบร้อย (วางแทนที่ส่วนท้ายสุดของไฟล์)
-    	window.addEventListener('DOMContentLoaded', function() {
+    });
+
+    window.addEventListener('DOMContentLoaded', function() {
         checkLocation();
-   	});
+    });
 </script>
 
 </body>
