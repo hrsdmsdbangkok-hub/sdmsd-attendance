@@ -397,12 +397,40 @@
         // ยิงส่งข้อมูลไปยัง Web App URL ของกูเกิลแอปสคริปต์
         const webAppUrl = "https://script.google.com/macros/s/AKfycbwlndm-0Pz-vhFIEMkUka2pEyvhVHELyD3JnFavf8xHlTYFqBSkadW6GyaTHfOw4p3eeQ/exec";
 
+        // ยิงส่งข้อมูลไปยัง Web App URL ของกูเกิลแอปสคริปต์ (เวอร์ชันแก้ไขอาการค้าง)
+        const webAppUrl = "เอา_WEB_APP_URL_ชุดใหม่จากสเต็ปที่1มาวางตรงนี้ครับ";
+
+        // แปลงข้อมูลให้อยู่ในรูปแบบฟอร์มปกติเพื่อทะลวงด่านระบบความปลอดภัยบราวเซอร์มือถือ
         fetch(webAppUrl, {
             method: "POST",
-            mode: "no-cors", // ใช้ no-cors ป้องกันปัญหา Cross-Origin บนเบราว์เซอร์มือถือ
-            headers: { "Content-Type": "application/json" },
+            mode: "cors", // เปลี่ยนเป็น cors แท้ ร่วมกับโค้ดกูเกิลสคริปต์ตัวใหม่ข้างบน
+            headers: { "Content-Type": "text/plain;charset=utf-8" }, // ใช้ text/plain เพื่อเลี่ยงการติดด่าน Pre-flight check
             body: JSON.stringify(payload)
         })
+        .then(response => {
+            // เมื่อส่งสำเร็จแล้ว ให้ปิดสถานะค้างทันที และโชว์ป๊อปอัปแจ้งพนักงาน
+            alertBox.style.display = "block";
+            alertBox.className = `alert-box alert-success`;
+            alertBox.innerHTML = `🔔 บันทึกสำเร็จเรียบร้อย!<br>คุณได้ลงเวลา (${actionType}) ตอนกี่โมง: <b>${currentTimeStr} น.</b><br>สถานะระบบสรุป: <span style="text-decoration:underline;">${workStatus}</span>`;
+            
+            alert(`บันทึกเวลาสำเร็จ!\nคุณลงเวลาตอน: ${currentTimeStr} น.\nผลลัพธ์ระบบ: ${workStatus}`);
+            
+            // ล้างข้อมูลชื่อในช่องฟอร์มเพื่อให้คนถัดไปสแกนต่อได้เลย
+            document.getElementById('fullname').value = "";
+            photoPreview.style.display = 'none';
+            video.style.display = 'block';
+            snapBtn.innerText = "📸 กดถ่ายภาพ";
+            photoData = "";
+            checkLocation(); 
+        })
+        .catch(err => {
+            // หากระบบเน็ตมือถือหลุดหรือมีปัญหาจริงๆ จะได้แจ้งเตือนได้ถูกต้อง ไม่ขึ้นค้าง
+            alertBox.style.display = "block";
+            alertBox.className = `alert-box alert-error`;
+            alertBox.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง";
+            submitBtn.disabled = false;
+            submitBtn.innerText = "📌 ลองกดบันทึกอีกครั้ง";
+        });
         .then(() => {
             alertBox.style.display = "block";
             alertBox.className = `alert-box alert-success`;
